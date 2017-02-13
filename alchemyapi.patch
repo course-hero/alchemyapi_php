@@ -1,0 +1,40 @@
+diff --git a/alchemyapi.php b/alchemyapi.php
+index 8df2ff1..86b264e 100644
+--- a/alchemyapi.php
++++ b/alchemyapi.php
+@@ -689,7 +689,16 @@ class AlchemyAPI {
+ 	  $options[$flavor] = $data;
+ 	  return $this->analyze($this->_ENDPOINTS['combined'][$flavor], $options);
+ 	}	
+-	
++
++	/**
++	  *	Cleans and decodes an alchemy response
++	  *	@param $response
++	  *	@return string - decoded response
++	*/	
++	private function decodeResponse($response) {
++		$response = str_replace('\a', '\\\a', $response);
++ 		return json_decode($response, true);
++	}
+ 
+ 	/**
+ 	  *	HTTP Request wrapper that is called by the endpoint functions. This function is not intended to be called through an external interface. 
+@@ -717,7 +726,7 @@ class AlchemyAPI {
+ 			$fp = @fopen($url, 'rb',false, stream_context_create($header));
+ 			$response = @stream_get_contents($fp);
+ 			fclose($fp);
+-			return json_decode($response, true);
++			return $this->decodeResponse($response);
+ 		} catch (Exception $e) {
+ 			return array('status'=>'ERROR', 'statusInfo'=>'Network error');
+ 		}
+@@ -741,7 +750,7 @@ class AlchemyAPI {
+ 			$fp = @fopen($url, 'rb',false, stream_context_create($header));
+ 			$response = @stream_get_contents($fp);
+ 			fclose($fp);
+-			return json_decode($response, true);
++			return $this->decodeResponse($response);
+ 		} catch (Exception $e) {
+ 			return array('status'=>'ERROR', 'statusInfo'=>'Network error');
+ 		}
